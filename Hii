@@ -1,0 +1,49 @@
+import streamlit as st
+import random
+
+st.set_page_config(page_title="91 Club Number Predictor", layout="centered")
+
+st.title("馃幆 91 Club Number + Color Predictor")
+
+st.markdown("Enter your last 5 numbers (0鈥�9). We鈥檒l predict the next 3 numbers and their colors.")
+
+# User input
+user_input = st.text_input("Last 5 Numbers (comma-separated)", value="1, 9, 5, 2, 8")
+
+# Number 鈫� Color conversion
+def number_to_color(n):
+    if n == 0 or n == 5:  # Optional violet logic
+        return "Violet"
+    elif n % 2 == 0:
+        return "Green"
+    else:
+        return "Red"
+
+if user_input:
+    try:
+        numbers = [int(n.strip()) for n in user_input.split(",")]
+        if len(numbers) != 5:
+            st.warning("鈿狅笍 Please enter exactly 5 numbers.")
+        else:
+            last_colors = [number_to_color(n) for n in numbers]
+            st.write(f"馃Ь Colors: {last_colors}")
+
+            # Smart prediction (simple cycle logic)
+            predictions = []
+            red_count = last_colors.count("Red")
+            green_count = last_colors.count("Green")
+
+            for i in range(3):
+                if green_count > red_count:
+                    num = random.choice([1, 3, 7, 9])
+                elif red_count > green_count:
+                    num = random.choice([2, 4, 6, 8])
+                else:
+                    num = random.choice([0, 2, 4, 5, 7, 9])
+                predictions.append((num, number_to_color(num)))
+
+            st.success("馃幆 Predicted Next 3 Numbers + Colors:")
+            for i, (num, col) in enumerate(predictions, 1):
+                st.markdown(f"**#{i}: {num} 鈫� {col}**")
+    except:
+        st.error("鉂� Invalid input. Only numbers 0鈥�9 allowed, separated by commas.")
